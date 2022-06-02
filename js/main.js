@@ -1,11 +1,17 @@
-const element = document.getElementById("totalPrecio");
-element.innerHTML = "Total en precio";
+let contador = 0;
+let costoTotal = 0;
+const contadorProductos = document.getElementById("contadorProductos");
+//const element = document.getElementById("totalPrecio");
+//element.innerHTML = "Total en precio";
 
 let txtNombre = document.getElementById("Name");
 //txtNombre.value = "Leche Semidescremada";
 //console.log(txtNombre.value);
 let txtNumber = document.getElementById("Number");
 let campos = document.getElementsByClassName("campo");
+
+let total = document.getElementById("precioTotal");
+
 /*campos[0].value = "Leche descremada deslactosada light = Agua";
 console.log(campos[0].value);
 console.log(campos);
@@ -32,24 +38,86 @@ cuerpoTabla[0].innerHTML = `
     </tr>
 `;
 */
+function validarNombre() {
+  if (txtNombre.value.length < 3) {
+    return false;
+  }//if
+  return true;
+}// validarNombre
+
+function validarCantidad() {
+  if (txtNumber.value.length == 0) {
+    return false;
+  }// if
+  if (isNaN(txtNumber.value)) {
+    return false;
+  }//if
+
+  if (parseFloat(txtNumber.value) <= 0) {
+    return false;
+  }//if
+  return true;
+}// validarCantidad
 let agregar = document.getElementById("btnAgregar");
 agregar.addEventListener("click", (event) => {
-    let precio = Math.floor(Math.random() * 100);
-    let tmp = `
+  event.preventDefault();
+  if ((!validarNombre()) || (!validarCantidad())) {
+    let lista = "";
+    if (!validarNombre()) {
+      txtNombre.style.border = "red thin solid";
+      lista += "<li>Se debe escribir un nombre válido</li>";
+    }//
+    if (!validarCantidad()) {
+      txtNumber.style.border = "red thin solid";
+      lista += "<li>Se debe escribir una cantidad válida</li>";
+    }//
+    document.getElementById("alertValidacionesTexto").innerHTML = `
+        Los campos deben ser llenados correctamente.
+        <ul>${lista} </ul>
+        `;
+    document.getElementById("alertValidaciones").style.display = "block";
+    setTimeout(function () {
+      document.getElementById("alertValidaciones").style.display = "none";
+    },
+      5000
+    );
+    return false;
+  }//if
+  txtNumber.style.border = "";
+  txtNombre.style.border = "";
+  document.getElementById("alertValidaciones").style.display = "none";
+  //contador++;
+  document.getElementById("contadorProductos").innerHTML = contador;
+  let precio = Math.floor((Math.random() * 50) * 100) / 100;
+  let cantidad = parseFloat(txtNumber.value);
+  costoTotal += (precio * cantidad);
+  total.innerHTML = `$ ${costoTotal.toFixed(2)}`;
+
+  let tmp = `
     <tr>
-      <th scope="row">1</th>
+      <th scope="row">${++contador}</th>
       <td>${txtNombre.value}</td>
       <td>${txtNumber.value}</td>
       <td>$ ${precio}</td>
     </tr>
     `
 
-    console.log(tmp);
-    cuerpoTabla[0].innerHTML += tmp;
-    txtNumber.value = "";
-    txtNombre.value = "";
-    txtNombre.focus();
+  //console.log(tmp);
+  cuerpoTabla[0].innerHTML += tmp;
+  txtNumber.value = "";
+  txtNombre.value = "";
+  txtNombre.focus();
+  contadorProductos.innerHTML = contador;
 })
+txtNombre.addEventListener("blur", (event) => {
+  event.target.value = event.target.value.trim();
+}
+);
+
+txtNumber.addEventListener("blur", (event) => {
+  event.target.value = event.target.value.trim();
+}
+);
 /*
 console.log(agregar)
     <tr>
