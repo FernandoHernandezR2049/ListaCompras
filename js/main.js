@@ -1,6 +1,8 @@
 let contador = 0;
 let costoTotal = 0;
 let totalEnProductos = 0;
+
+let datos = [];
 const contadorProductos = document.getElementById("contadorProductos");
 //const element = document.getElementById("totalPrecio");
 //element.innerHTML = "Total en precio";
@@ -98,6 +100,16 @@ agregar.addEventListener("click", (event) => {
   costoTotal += (precio * cantidad);
   total.innerHTML = `$ ${costoTotal.toFixed(2)}`;
   localStorage.setItem("costoTotal", costoTotal);
+  let elemento = `{
+    "id": ${contador},
+    "nombre": "${txtNombre.value}",
+    "cantidad": ${txtNumber.value},
+    "precio": ${precio}
+  }`;
+  datos.push(JSON.parse(elemento));
+
+  localStorage.setItem("elementosTabla", JSON.stringify(datos));
+  console.log(datos);
   let tmp = `
     <tr>
       <th scope="row">${contador}</th>
@@ -136,6 +148,20 @@ window.addEventListener("load", () => {
   if (localStorage.getItem("costoTotal")) {
     costoTotal = parseFloat(localStorage.getItem("costoTotal"));
     document.getElementById("precioTotal").innerHTML = `$ ${costoTotal}`;
+  }
+  if (localStorage.getItem("elementosTabla") != null) {
+    datos = JSON.parse(localStorage.getItem("elementosTabla"));
+    datos.forEach(element => {
+      cuerpoTabla[0].innerHTML += `
+    <tr>
+      <th scope="row">${element.id}</th>
+      <td>${element.nombre}</td>
+      <td>${element.cantidad}</td>
+      <td>$ ${element.precio}</td>
+    </tr>
+`
+
+    });
   }
   console.log(localStorage.getItem("contadorProductos"));
   console.log(localStorage.getItem("productosTotal"));
